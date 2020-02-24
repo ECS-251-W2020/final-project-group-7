@@ -1,0 +1,72 @@
+
+VOTING PROCESS
+
+------------------------
+
+Sponsor (pick1)(these are Json files sent through web):
+
+AttenderList00(*list,VertifyID(ID,Info*))
+(every attender provide information to prove that they are on the list, then the system use VertifyID() to check if user)
+
+
+AttenderList01(*EmailList)
+(send a email to everyone, only the key attached to the email can attend)
+
+--------------------------------
+
+Attender(these are Json files sent through web):
+
+Attend(ID,Info*,EmailAddress)
+(attender send this to the server to prove that they are the attender, and get key through EmailAddress)
+
+----------------------------
+
+Voting Server:
+
+CreateVote(){
+	
+	#Create a chain
+	
+	SendAttenderEmail(){
+		#send PrivateKey, User ID, "BlockChainServerIP"
+		#make sure User can check the chain by "IP/chain"
+	}
+	
+	#Set a timer to periodically mine the chain
+}
+
+-----------------------------
+
+Attender:
+
+Access BlockChainIP/mine for at least once
+( to Get a coin from the server )
+
+Post "/transactions/new" to vote
+
+------------------------
+
+Voting Server:
+
+Timer trigger -> mine(){
+	#send /mine to BlockChain Server
+}
+
+Voting End Time Trigger -> endTransaction(){
+	#send an empty transactions/new( with specified time stamp )
+}
+
+After mine out the empty transaction -> FinishVote(){
+	#Stop mining
+	#Get the full chain by /chain
+	#count to vote (only the first transaction per Key)
+}
+
+----------------------
+
+END
+
+
+
+
+
