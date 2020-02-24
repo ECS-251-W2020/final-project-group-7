@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 import requests
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, url_for
 from python.blockchain import Blockchain
 
 # Instantiate the Node
@@ -17,6 +17,17 @@ node_identifier = str(uuid4()).replace('-', '')
 # Instantiate the Blockchain
 blockchain = Blockchain()
 
+@app.route('/')
+def my_index():
+    return render_template('index.html')
+
+@app.route('/create', methods=['GET', 'POST'])
+def create_vote():
+    return render_template('createvote.html')
+
+@app.route('/attend', methods=['GET', 'POST'])
+def attend_vote():
+    return render_template('attendvote.html')
 
 @app.route('/mine', methods=['GET'])
 def mine():
@@ -109,11 +120,12 @@ def consensus():
 
 
 if __name__ == '__main__':
-    from argparse import ArgumentParser
+    app.run(debug=True)
+    #from argparse import ArgumentParser
 
-    parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
-    args = parser.parse_args()
-    port = args.port
+    #parser = ArgumentParser()
+    #parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
+    #args = parser.parse_args()
+    #port = args.port
 
-    app.run(host='0.0.0.0', port=port)
+    #app.run(host='0.0.0.0', port=port)
