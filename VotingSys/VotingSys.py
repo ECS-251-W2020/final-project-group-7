@@ -14,15 +14,22 @@ class VotingSys:
         self.voteChain = []
         self.startMiningTimer()
 
-    
+    #Triggered by the message from sponsor
     def createVote(self, emailList):
         #Set the basic information of a new chain (port)
         fuck = 0
 
-        #launch the blockchain as a subprocess
+        #launch a new blockchain as a subprocess
         
         #add the chain to self.votChain
 
+        #add a new timer to stop the vote
+        self.votingTimeCountDown()
+
+        #send everyone a email containing the PrivateKey, ID, IP & Port
+        self.sendAttenderEmail()
+
+    def sendAttenderEmail(self, emailList):
         #send everyone a email containing the PrivateKey, ID, IP & Port
 
 
@@ -30,10 +37,28 @@ class VotingSys:
         #Create a timer, every 10 seconds, traverse through the voteChain
         
         for k in self.voteChain:
-            fuck = 0
-            #send a /mine
+            #if k is not finished yet 
+                #send a /mine
     
-    def 
+    def votingTimeCountDown(self, endDate, voteInfo):
+        #when time end, send specified Post to BlockChain
+        # sth. like POST localhost:5000/timeEnd
+
+    #followed func will be triggered by a message from BlockChain
+    def finishVote(self, voteInfo):
+        #add a tag to the chain to stop mining that chain
+
+        #count the vote
+        self.countVote()
+        #set a timer to stop the blockChain after several days
+        self.createFinishedVoteTimer()
+
+    def countVote(self, voteInfo):
+        #countTheVote and PrintOut(and other things)
+
+    def createFinishedVoteTimer(self, voteInfo):
+        #download all the info of that chain
+        #then, delete the vote in self.voteChain
     
     
         
