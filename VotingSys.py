@@ -19,15 +19,17 @@ from flask import Flask, jsonify, request
 class VotingSys:
     def __init__(self):
         self.voteChain = []
-        self.startMiningTimer()
+        print("xujuanyi")
+        #self.startMiningTimer()
         self.port = 5000 #use 5000 as defort port
         #self.newChainPort = self.port
+        print("meiyousixunhuan")
 
     #Triggered by the message from sponsor
     def createVoteChain(self, voteIntro, candidate, emailList, startTime, endTime):
 
         print("===============================================")
-        print(time.strftime('[%Y-%m-%d %H:%M:%S]'))    
+        #print(time.strftime('[%Y-%m-%d %H:%M:%S]'))    
         print("============TESTING CREATE CHAIN===============") 
         print("===============================================")
 
@@ -37,11 +39,11 @@ class VotingSys:
             'index': len(self.voteChain) + 1,
             'timestamp': time(),
             'voteIntro': voteIntro,
-            'candidate': proof,
+            'candidate': candidate,
             'emailList': emailList,
             'startTime': startTime,
             'endTime': endTime,
-            'port': calculatePortFromInfo( voteIntro , len(self.voteChain)+1 ),
+            'port': str(self.calculatePortFromInfo( voteIntro , len(self.voteChain)+1 )),
         }
 
         #launch a new blockchain as a subprocess                
@@ -79,6 +81,7 @@ class VotingSys:
 
 
     def autoMining(self):
+        print("fuck!")
         for k in self.voteChain:
             if time()>k['startTime'] and time()<k['endTime']:    #if k is not finished yet
                 r = requests.get("http://localhost:"+k['port']+"/mine")
@@ -87,14 +90,16 @@ class VotingSys:
     def startMiningTimer(self):
         #Create a timer, every 10 seconds, traverse through the voteChain
         scheduler = BlockingScheduler()
-        scheduler.add_job(self.autoMining(), 'interval', seconds=10, id='test_job1')
+        scheduler.add_job(self.autoMining, 'interval', seconds=10, id='test_job1')
         scheduler.start()
         
     
     def votingStartTimer(self, voteIndex, startTime):
+        return 0
         # set a timer, when vote start, tell BlockChain to send email to attender
 
     def votingTimeCountDown(self, voteIndex, endTime):
+        return 0
         # set a timer, when time end, send specified Post to BlockChain
         # sth. like POST localhost:5000/timeEnd
 
@@ -123,11 +128,13 @@ class VotingSys:
         return xxx
 
     def countVote(self, voteIndex):
+        return 0
         #countTheVote and PrintOut(and other things)
 
     def createFinishedVoteTimer(self, voteIndex):
         # set a timer, download all the info of that chain
         #then, shutdown that block chain, and delete the vote in self.voteChain
+        return 0
     
     
 
@@ -186,6 +193,6 @@ if __name__ == '__main__':
 
     votingSystem.port = port
 
-    app.run(host='0.0.0.0', port=port)       
-
-
+    app.run(host='0.0.0.0', port=port)
+    print("Run Timer!")
+    votingSystem.startMiningTimer() 
