@@ -14,6 +14,7 @@
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/skel.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style-xlarge.css') }}" />
+
 	</head>
 	<body>
 
@@ -37,13 +38,15 @@
 							<form method="post" action="#">
 								<div class="row uniform 50%">
 									<div class="12u 12u$(xsmall)">
+										<input type="text" name="key" id="key" value="" placeholder="Enter your key" />
+									</div>
+									<div class="12u 12u$(xsmall)">
 										<div class="select-wrapper">
 											<select name="category" id="category">
-												<option value="">- Category -</option>
-												<option value="1">Manufacturing</option>
-												<option value="1">Shipping</option>
-												<option value="1">Administration</option>
-												<option value="1">Human Resources</option>
+												<option value="">- Select the candidate -</option>
+												{% for i in contents %}
+                         <option value="{{i}}" >{{ i }}</option>
+                        {% endfor %}
 											</select>
 										</div>
 									</div>
