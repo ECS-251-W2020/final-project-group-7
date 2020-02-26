@@ -18,9 +18,9 @@ sender_qq_mail = '1713363421@qq.com'
 #收件人邮箱
 #receiver = 'wumutingtingting@gmail.com'
 #邮件的正文内容
-mail_content = '你好，我是来自知乎的[吴牧霆MIT] ，现在在进行一项用python登录qq邮箱发邮件的测试'
+mail_content = 'Dear attender, here is an invitation to participate in an interesting vote.'
 #邮件标题
-mail_title = '吴牧霆MIT 的邮件'
+mail_title = 'An invitation to vote'
 
 for email in emailList:
     smtp = SMTP_SSL(host_server)
