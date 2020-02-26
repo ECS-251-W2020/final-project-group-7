@@ -19,6 +19,7 @@ class Blockchain:
         self.nodes = set()
         self.port = "5000"
         self.password = ""
+        self.keylist = []
         #self.voteInfo = {}
 
         # Create the genesis block
@@ -144,6 +145,9 @@ class Blockchain:
         })
 
         return self.last_block['index'] + 1
+    
+    def createCryptoKey(self, email):
+        return str(uuid4()).replace('-', '')[-16:]
 
     def sendAttenderEmail(self, emailList, port):
         host_server = 'smtp.qq.com'
@@ -160,7 +164,8 @@ class Blockchain:
         
         for email in emailList:
             key = self.createCryptoKey(email)
-            self.keylist[email] = key
+            #self.keylist[email] = key
+            self.keylist.append(key)
             mail_content = 'Dear attender, here is an invitation to participate in an interesting vote. The website is 0.0.0.1, and the\
             port number is ' + str(port) + ' , and your crypto key is ' + str(key)
 
@@ -371,10 +376,26 @@ def initVoteMessage():
     #   blockchain.register_node(node)
 
     response = {
-        'message': 'password Committed',
+        'message': 'Vote Chain Created Successfully',
         #'total_nodes': list(blockchain.nodes),
     }
     return jsonify(response), 201
+
+@app.route('/voteTimeEnd', methods=['POST'])
+def votingTimeEnd():
+    values = request.get_json()
+
+    required = ['password']
+
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    
+    if blockchain.password != values.get('password'):
+        return "Error: Your password does not fit to this chain", 401
+    
+    #here, call the function countVote() print the result
+
+
 
 
 if __name__ == '__main__':
