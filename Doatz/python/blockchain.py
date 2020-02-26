@@ -8,6 +8,9 @@ from uuid import uuid4
 import requests
 from flask import Flask, jsonify, request
 
+from email.mime.text import MIMEText
+from email.header import Header
+from smtplib import SMTP_SSL
 
 class Blockchain:
     def __init__(self):
@@ -143,7 +146,32 @@ class Blockchain:
         return self.last_block['index'] + 1
 
     def sendAttenderEmail(self, emailList, port):
+        host_server = 'smtp.qq.com'
+        sender_qq = '1713363421'
+        pwd = 'choooqcngrlyfbbg'
+        sender_qq_mail = '1713363421@qq.com'
+        
+        smtp = SMTP_SSL(host_server)
+        smtp.set_debuglevel(1)
+        smtp.ehlo(host_server)
+        smtp.login(sender_qq, pwd)
+        
+        mail_title = 'An invitation to vote'
+        
+        for email in emailList:
+            key = self.createCryptoKey(email)
+            self.keylist[email] = key
+            mail_content = 'Dear attender, here is an invitation to participate in an interesting vote. The website is 0.0.0.1, and the\
+            port number is ' + str(port) + ' , and your crypto key is ' + str(key)
 
+            receiver = email
+            msg = MIMEText(mail_content, "plain", 'utf-8')
+            msg["Subject"] = Header(mail_title, 'utf-8')
+            msg["From"] = sender_qq_mail
+            msg["To"] = receiver
+            smtp.sendmail(sender_qq_mail, receiver, msg.as_string())
+        
+        smtp.quit()
         return
 
     def setVoteInitInfo(self, voteInfo):
