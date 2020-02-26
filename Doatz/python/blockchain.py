@@ -8,9 +8,6 @@ from uuid import uuid4
 import requests
 from flask import Flask, jsonify, request
 
-from email.mime.text import MIMEText
-from email.header import Header
-from smtplib import SMTP_SSL
 
 class Blockchain:
     def __init__(self):
@@ -146,38 +143,15 @@ class Blockchain:
         return self.last_block['index'] + 1
 
     def sendAttenderEmail(self, emailList, port):
-        host_server = 'smtp.qq.com'
-        sender_qq = '1713363421'
-        pwd = 'choooqcngrlyfbbg'
-        sender_qq_mail = '1713363421@qq.com'
-        
-        smtp = SMTP_SSL(host_server)
-        smtp.set_debuglevel(1)
-        smtp.ehlo(host_server)
-        smtp.login(sender_qq, pwd)
-        
-        mail_title = 'An invitation to vote'
-        
-        for email in emailList:
-            key = self.createCryptoKey(email)
-            self.keylist[email] = key
-            mail_content = 'Dear attender, here is an invitation to participate in an interesting vote. The website is 0.0.0.1, and the\
-            port number is ' + str(port) + ' , and your crypto key is ' + str(key)
 
-            receiver = email
-            msg = MIMEText(mail_content, "plain", 'utf-8')
-            msg["Subject"] = Header(mail_title, 'utf-8')
-            msg["From"] = sender_qq_mail
-            msg["To"] = receiver
-            smtp.sendmail(sender_qq_mail, receiver, msg.as_string())
-        
-        smtp.quit()
         return
 
     def setVoteInitInfo(self, voteInfo):
         #Init the Voting info
-        #1 add a new block that include intro & candidate
+        #1 add intro & candidate to transfer
 
+        self.current_transactions.append(voteInfo.get('voteIntro'))
+        self.current_transactions.append(voteInfo.get('candidate'))
 
         #2 send email to all attender (with cryptokey) and save the list of key
         self.sendAttenderEmail(voteInfo.get('emailList'),voteInfo.get('port'))
@@ -353,12 +327,17 @@ def initVoteMessage():
     # mayby deal with Possible fields like 'voteName', 'briefIntro' later...
 
     if not all(k in values for k in required):
+        print("missing Values")
         return 'Missing values', 400
     
     if blockchain.port != values.get('port'):
+        print(type(blockchain.port))
+        print(type(values.get('port')))
+        print("Port Error: Send to the wrong port")
         return "Port Error: Send to the wrong port", 400
 
     if blockchain.password != values.get('password'):
+        print("Error: Your password does not fit to this chain")
         return "Error: Your password does not fit to this chain", 401
 
     print(values)
@@ -372,6 +351,8 @@ def initVoteMessage():
         'message': 'password Committed',
         #'total_nodes': list(blockchain.nodes),
     }
+
+    print("password Committed")
     return jsonify(response), 201
 
 
@@ -382,7 +363,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
     parser.add_argument('-k', '--key', default='votingKey', type=str, help='controling Password')
     args = parser.parse_args()
-    blockchain.port = args.port
+    blockchain.port = str(args.port)
     blockchain.password = args.key
 
     print("=============NEW CHAIN CREAT============")
