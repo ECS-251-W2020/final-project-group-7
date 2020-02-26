@@ -19,7 +19,7 @@ class Blockchain:
         self.nodes = set()
         self.port = "5000"
         self.password = ""
-        self.keylist = []
+        self.keylist = set()
         #self.voteInfo = {}
 
         # Create the genesis block
@@ -156,7 +156,7 @@ class Blockchain:
         sender_qq_mail = '1713363421@qq.com'
         
         smtp = SMTP_SSL(host_server)
-        smtp.set_debuglevel(1)
+        #smtp.set_debuglevel(1)
         smtp.ehlo(host_server)
         smtp.login(sender_qq, pwd)
         
@@ -165,7 +165,7 @@ class Blockchain:
         for email in emailList:
             key = self.createCryptoKey(email)
             #self.keylist[email] = key
-            self.keylist.append(key)
+            self.keylist.add(key)
             mail_content = 'Dear attender, here is an invitation to participate in an interesting vote. The website is 0.0.0.1, and the\
             port number is ' + str(port) + ' , and your crypto key is ' + str(key)
 
