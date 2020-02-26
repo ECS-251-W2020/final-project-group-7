@@ -206,7 +206,7 @@ if __name__ == '__main__':
     votingSystem.port = port
 
     t1 = threading.Thread(target=app.run, args=('0.0.0.0',port))
-    t2 = threading.Thread(target=votingSystem.startMiningTimer)
+    t2 = threading.Timer(60, votingSystem.startMiningTimer)
     t1.start()
     t2.start()
     #app.run(host='0.0.0.0', port=port)
