@@ -15,7 +15,18 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import requests
 from flask import Flask, jsonify, request
 
-
+def SendRequest(port, password)
+    data = {"key": password}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post("http://localhost:"+port+"/voteTimeEnd", json=data, headers = headers)
+    return 0
+def DeleteChain(port,password)
+    data = {"key": password}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post("http://localhost:"+port+"/DeleteChain", json=data, headers = headers)
+    with open(port + "record.json","w") as f:
+        json.dump(r,f)
+    return 0
 
 class VotingSys:
     def __init__(self):
@@ -118,9 +129,11 @@ class VotingSys:
 
         # post: /voteTimeEnd ["key":"xxx"]
         # the key here should be set later in the project
-
-        return
-
+        port = self.voteChain[voteIndex]["port"]
+        password = self.voteChain[voteIndex]["password"]
+        newthread = threading.Timer(endTime, SendRequest,(port, password))
+        newthread.start()
+        return 0
 
     #followed func will be triggered by a message from BlockChain
     def finishVote(self, voteIndex):
@@ -154,11 +167,11 @@ class VotingSys:
     def createFinishedVoteTimer(self, voteIndex):
         # set a timer, download all the info of that chain
         #then, shutdown that block chain, and delete the vote in self.voteChain
-
-
-
-        return
-    
+        port = self.voteChain[voteIndex]["port"]
+        password = self.voteChain[voteIndex]["password"]
+        newthread = threading.Timer(endTime, DeleteChain,(port, password))
+        newthread.start()
+        return 0
     
 
 app = Flask(__name__)
