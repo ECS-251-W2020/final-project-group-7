@@ -15,7 +15,19 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import requests
 from flask import Flask, jsonify, request, render_template, url_for
 
+def SendRequest(port, password):
+    data = {"password": password, "port":port}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    requests.post("http://localhost:"+port+"/voteTimeEnd", json=data, headers = headers)
+    return 0
 
+def DeleteChain(port,password):
+    data = {"password": password, "port":port}
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    r = requests.post("http://localhost:"+port+"/DeleteChain", json=data, headers = headers)
+    with open(port + "record.json","w") as f:
+        json.dump(r.json(),f)
+    return 0
 
 class VotingSys:
     def __init__(self):
@@ -69,6 +81,8 @@ class VotingSys:
 
         #add a new timer to stop the vote
         self.votingTimeCountDown(newChain['index'],endTime)
+        #test
+        self.createFinishedVoteTimer(newChain['index'])
     
     def calculatePortFromInfo(self, voteIntro, voteIndex):
         #set the port (should be crypto before sending email, now only for test)
@@ -118,7 +132,10 @@ class VotingSys:
 
         # post: /voteTimeEnd ["key":"xxx"]
         # the key here should be set later in the project
-
+        port = self.voteChain[voteIndex]["port"]
+        password = self.voteChain[voteIndex]["password"]
+        newthread = threading.Timer(30, SendRequest,(port, password))
+        newthread.start()
         return
 
 
@@ -154,10 +171,11 @@ class VotingSys:
     def createFinishedVoteTimer(self, voteIndex):
         # set a timer, download all the info of that chain
         #then, shutdown that block chain, and delete the vote in self.voteChain
-
-
-
-        return
+        port = self.voteChain[voteIndex]["port"]
+        password = self.voteChain[voteIndex]["password"]
+        newthread = threading.Timer(10, DeleteChain,(port, password))
+        newthread.start()
+        return 0
     
     
 
