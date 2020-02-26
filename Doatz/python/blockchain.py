@@ -176,7 +176,9 @@ class Blockchain:
 
     def setVoteInitInfo(self, voteInfo):
         #Init the Voting info
-        #1 add a new block that include intro & candidate
+        #1 add intro & candidate into block
+        self.current_transactions.append(voteInfo.get('voteIntro'))
+        self.current_transactions.append(voteInfo.get('candidate'))
 
 
         #2 send email to all attender (with cryptokey) and save the list of key
@@ -382,7 +384,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
     parser.add_argument('-k', '--key', default='votingKey', type=str, help='controling Password')
     args = parser.parse_args()
-    blockchain.port = args.port
+    blockchain.port = str(args.port)
     blockchain.password = args.key
 
     print("=============NEW CHAIN CREAT============")
