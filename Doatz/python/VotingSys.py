@@ -13,20 +13,9 @@ import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 import requests
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, url_for
 
-def SendRequest(port, password)
-    data = {"key": password}
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    r = requests.post("http://localhost:"+port+"/voteTimeEnd", json=data, headers = headers)
-    return 0
-def DeleteChain(port,password)
-    data = {"key": password}
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    r = requests.post("http://localhost:"+port+"/DeleteChain", json=data, headers = headers)
-    with open(port + "record.json","w") as f:
-        json.dump(r,f)
-    return 0
+
 
 class VotingSys:
     def __init__(self):
@@ -53,7 +42,7 @@ class VotingSys:
             'emailList': emailList,
             'startTime': startTime,
             'endTime': endTime,
-            'port': str(self.calculatePortFromInfo( voteIntro , len(self.voteChain)+1 )),
+            'port': str(self.calculatePortFromInfo( voteIntro , len(self.voteChain) )),
             'password': str(uuid4()).replace('-', '')[-6:]
         }
 
@@ -83,7 +72,7 @@ class VotingSys:
     
     def calculatePortFromInfo(self, voteIntro, voteIndex):
         #set the port (should be crypto before sending email, now only for test)
-        return self.port + voteIndex
+        return self.port + voteIndex + 1
 
     # probably this should be done by BlockChain
     def sendAttenderEmail(self, emailList):
@@ -129,11 +118,9 @@ class VotingSys:
 
         # post: /voteTimeEnd ["key":"xxx"]
         # the key here should be set later in the project
-        port = self.voteChain[voteIndex]["port"]
-        password = self.voteChain[voteIndex]["password"]
-        newthread = threading.Timer(endTime, SendRequest,(port, password))
-        newthread.start()
-        return 0
+
+        return
+
 
     #followed func will be triggered by a message from BlockChain
     def finishVote(self, voteIndex):
@@ -167,11 +154,11 @@ class VotingSys:
     def createFinishedVoteTimer(self, voteIndex):
         # set a timer, download all the info of that chain
         #then, shutdown that block chain, and delete the vote in self.voteChain
-        port = self.voteChain[voteIndex]["port"]
-        password = self.voteChain[voteIndex]["password"]
-        newthread = threading.Timer(endTime, DeleteChain,(port, password))
-        newthread.start()
-        return 0
+
+
+
+        return
+    
     
 
 app = Flask(__name__)
@@ -183,24 +170,60 @@ def helloWorld():
     print("hello world")
     return jsonify({"message":"hello world"}), 201
 
-@app.route('/createVote', methods=['POST'])
-def createVote():
-    values = request.get_json()
+@app.route('/', methods=['GET'])
+def my_index():
+    return render_template('index.html')
+
+@app.route('/create', methods=['GET','POST'])
+def create_vote():
+    #values = request.get_json()
     # Check that the required fields are in the POST'ed data
-    required = ['voteIntro', 'candidate', 'emailList', 'startTime', 'endTime']
+    #required = ['voteIntro', 'candidate', 'emailList', 'startTime', 'endTime']
     # mayby deal with Possible fields like 'voteName', 'briefIntro' later...
 
-    if not all(k in values for k in required):
-        return 'Missing values', 400
+    #if not all(k in values for k in required):
+        #return 'Missing values', 400
     
     #Create the chain
-    xxx = votingSystem.createVoteChain(values['voteIntro'], values['candidate'], values['emailList'], values['startTime'], values['endTime'])
+    #xxx = votingSystem.createVoteChain(values['voteIntro'], values['candidate'], values['emailList'], values['startTime'], values['endTime'])
 
     ###################
     ## design sth. to return 
     ###################
 
-    return jsonify(xxx), 201
+    #return jsonify(xxx), 201
+    values = request.form.to_dict()
+    print(values)
+    if values:
+        candidates = values['candidates'].split(",")
+        print(candidates)
+        attenders = values['attenders'].split(',')     
+        print(attenders) 
+        xxx = votingSystem.createVoteChain(values['name'], candidates, attenders, values['sdate'], values['edate'])
+        return jsonify(xxx), 201
+    return render_template('createvote.html')
+
+@app.route('/attend', methods=['GET', 'POST'])
+def attend_vote():
+    values = request.form.to_dict()
+    if values:
+        key = values["key"]
+        selection = values["candidate"]
+        print("key: ",key)
+        print("selection: ",selection)
+
+        newVote = {
+            "sender": key,
+            "recipient": selection,
+            "amount": 1
+        }
+
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+
+        r = requests.post("http://localhost:5001/transactions/new", json=newVote, headers = headers)
+        print(r)
+
+    return render_template('attendvote.html')
 
 @app.route('/voteFinish', methods=['POST'])
 def mineOutSpecialInfo():

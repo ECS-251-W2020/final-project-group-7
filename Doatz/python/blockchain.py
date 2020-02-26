@@ -19,7 +19,7 @@ class Blockchain:
         self.nodes = set()
         self.port = "5000"
         self.password = ""
-        self.keylist = set()
+        self.keylist = []
         #self.voteInfo = {}
 
         # Create the genesis block
@@ -156,7 +156,7 @@ class Blockchain:
         sender_qq_mail = '1713363421@qq.com'
         
         smtp = SMTP_SSL(host_server)
-        #smtp.set_debuglevel(1)
+        smtp.set_debuglevel(1)
         smtp.ehlo(host_server)
         smtp.login(sender_qq, pwd)
         
@@ -165,7 +165,7 @@ class Blockchain:
         for email in emailList:
             key = self.createCryptoKey(email)
             #self.keylist[email] = key
-            self.keylist.add(key)
+            self.keylist.append(key)
             mail_content = 'Dear attender, here is an invitation to participate in an interesting vote. The website is 0.0.0.1, and the\
             port number is ' + str(port) + ' , and your crypto key is ' + str(key)
 
@@ -179,36 +179,6 @@ class Blockchain:
         smtp.quit()
         return
 
-    def CountVote(self):
-        vote_result = {}
-
-        candidate_block = chain[1]
-        candidate_transaction = candidate_block['transactions'][1]
-
-        already_vote_keylist = set()
-
-        for candidate in candidate_transaction:
-            vote_result[candidate] = 0
-
-        #print(vote_result)
-
-        for i in range(2, len(chain)):
-            block = chain[i]
-            for transaction in block['transactions']:
-                sender = transaction['sender']
-                recipient = transaction['recipient']
-                if sender not in self.keylist:                            #not valid participant
-                    continue
-                elif sender in already_vote_keylist:                      #participant already vote
-                    continue
-                elif recipient not in vote_result:                        #not valid candidate
-                    continue
-                else:
-                    vote_result[recipient] = vote_result[recipient] + 1
-                    already_vote_keylist.add(sender)
-
-        print(vote_result)
-    
     def setVoteInitInfo(self, voteInfo):
         #Init the Voting info
         #1 add intro & candidate into block
