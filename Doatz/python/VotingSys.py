@@ -35,7 +35,7 @@ class VotingSys:
         #Set the basic information of a new chain (port)
         
         newChain = {
-            'index': len(self.voteChain) + 1,
+            'index': len(self.voteChain),
             'timestamp': time(),
             'voteIntro': voteIntro,
             'candidate': candidate,
@@ -46,12 +46,19 @@ class VotingSys:
             'password': str(uuid4()).replace('-', '')[-6:]
         }
 
+        #print(newChain)
+        
+
         #launch a new blockchain as a subprocess                
         loader = subprocess.Popen(["pipenv","run","python","blockchain.py","-p",newChain['port'],"-k",newChain['password']])
         # I wonder if we can do sth. with loader
        
         #add the chain to self.voteChain
         self.voteChain.append(newChain)
+
+        #print(self.voteChain)
+
+        #print(type(self.voteChain))
 
         #start initialize the vote
         #save the Vote Info to the chain (by send sth. like a transfer)
@@ -74,9 +81,13 @@ class VotingSys:
 
     def initNewBlockChain(self, voteIndex):
         #send message to BlockChain to init the forst several block and create crypto key
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
+        #print(voteIndex)
+        #print(self.voteChain[voteIndex])
+        r = requests.post("http://localhost:5001/initVote", json=self.voteChain[voteIndex], headers = headers)
 
-
+        print(r)
         return
 
 
@@ -206,7 +217,7 @@ if __name__ == '__main__':
     votingSystem.port = port
 
     t1 = threading.Thread(target=app.run, args=('0.0.0.0',port))
-    t2 = threading.Timer(60, votingSystem.startMiningTimer)
+    t2 = threading.Thread(target=votingSystem.startMiningTimer)
     t1.start()
     t2.start()
     #app.run(host='0.0.0.0', port=port)
