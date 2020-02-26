@@ -19,7 +19,7 @@ from flask import Flask, jsonify, request
 class VotingSys:
     def __init__(self):
         self.voteChain = []
-        self.startMiningTimer()
+        #self.startMiningTimer()
         self.port = 5000 #use 5000 as defort port
         #self.newChainPort = self.port
 
@@ -80,7 +80,8 @@ class VotingSys:
 
     def autoMining(self):
         for k in self.voteChain:
-            if time()>k['startTime'] and time()<k['endTime']:    #if k is not finished yet
+            #if time()>k['startTime'] and time()<k['endTime']:    #if k is not finished yet
+            if True:
                 r = requests.get("http://localhost:"+k['port']+"/mine")
                 #print(r.json())
 
@@ -186,6 +187,9 @@ if __name__ == '__main__':
 
     votingSystem.port = port
 
-    app.run(host='0.0.0.0', port=port)       
+    t1 = threading.Thread(target=app.run,args=('0.0.0.0', port))
+    t2 = threading.Thread(target=votingSystem.startMiningTimer)
+    t1.start()
+    t2.start()      
 
 
