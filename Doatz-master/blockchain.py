@@ -427,7 +427,28 @@ def votingTimeEnd():
     #here, call the function countVote() print the result
     return blockchain.countVote()
 
+@app.route('/DeleteChain', methods=['POST'])
+def DeleteChain():
+    values = request.get_json()
 
+    required = ['password','port']
+
+    if not all(k in values for k in required):
+        print('Missing values', 400)
+        return 'Missing values', 400
+    
+    if blockchain.port != values.get('port'):
+        print("Port Error: Send to the wrong port")
+        return "Port Error: Send to the wrong port", 400
+
+    if blockchain.password != values.get('password'):
+        return "Error: Your password does not fit to this chain", 401
+    
+    response = {
+        'chain': blockchain.chain,
+        'length': len(blockchain.chain),
+    }
+    return response, 201
 
 
 if __name__ == '__main__':
