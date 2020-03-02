@@ -9,3 +9,26 @@ https://trello.com/b/5HGOJN57/ecs251osgroup7
 
 Summary of Progress:
 https://docs.google.com/document/d/1M-j_rnqOqQrnESMdYQdU7wHGRbH4rqavMOtFe5a2pTs/edit?ts=5e4ca193
+
+# Doatz
+
+
+## Installation
+
+1. Make sure [Python 3.6+](https://www.python.org/downloads/) is installed. 
+2. Install [pipenv](https://github.com/kennethreitz/pipenv). 
+
+```
+$ pip install pipenv 
+```
+3. Install requirements  
+```
+$ pipenv install Flask==0.12.2 requests==2.18.4
+``` 
+
+4. Run the server:
+    * `$ pipenv run python VotingSys.py` 
+    * `$ pipenv run python VotingSys.py -p 5001`
+    * `$ pipenv run python VotingSys.py --port 5002`
+    
+
