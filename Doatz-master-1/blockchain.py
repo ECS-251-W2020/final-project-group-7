@@ -206,12 +206,12 @@ class Blockchain:
     def countVote(self):
         vote_result = {}
 
-        candidate_block = self.chain[1]
-        candidate_transaction = candidate_block['transactions'][1]
+        #candidate_block = self.chain[1]
+        #candidate_transaction = candidate_block['transactions'][1]
 
-        already_vote_keylist = set()
+        #already_vote_keylist = set()
 
-        for candidate in candidate_transaction:
+        for candidate in self.candidate_list:
             vote_result[candidate] = 0
 
         #print(vote_result)
@@ -221,18 +221,22 @@ class Blockchain:
             for transaction in block['transactions']:
                 sender = transaction['sender']
                 recipient = transaction['recipient']
-                if sender not in self.keylist:                            #not valid participant
+
+                if sender == "0" or amount == "0":
                     continue
-                elif sender in already_vote_keylist:                      #participant already vote
-                    continue
-                elif recipient not in vote_result:                        #not valid candidate
-                    continue
+                #if sender not in self.keylist:                            #not valid participant
+                    #continue
+                #elif sender in already_vote_keylist:                      #participant already vote
+                    #continue
+                #elif recipient not in vote_result:                        #not valid candidate
+                    #continue
                 else:
                     vote_result[recipient] = vote_result[recipient] + 1
-                    already_vote_keylist.add(sender)
+                    #already_vote_keylist.add(sender)
 
         print(vote_result)
         return vote_result
+
 
     def setVoteInitInfo(self, voteInfo):
         #Init the Voting info
