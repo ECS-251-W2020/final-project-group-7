@@ -1,7 +1,6 @@
 import json
 import threading
 from time import time
-from time import sleep
 #from time import clock
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -38,7 +37,7 @@ def DeleteChain(port,password):
 class VotingSys:
     def __init__(self):
         self.voteChain = []
-        #self.startMiningTimer()
+        #self.startMiningTimer()        
         self.port = 5000 #use 5000 as defort port
         #self.newChainPort = self.port
 
@@ -46,12 +45,12 @@ class VotingSys:
     def createVoteChain(self, voteIntro, candidate, emailList, startTime, endTime):
 
         print("===============================================")
-        print(time())
-        print("============TESTING CREATE CHAIN===============")
+        print(time())    
+        print("============TESTING CREATE CHAIN===============") 
         print("===============================================")
 
         #Set the basic information of a new chain (port)
-
+        
         newChain = {
             'index': len(self.voteChain),
             'timestamp': time(),
@@ -65,12 +64,12 @@ class VotingSys:
         }
 
         #print(newChain)
+        
 
-
-        #launch a new blockchain as a subprocess
-        loader = subprocess.Popen(["pipenv","run","python3","blockchain.py","-p",newChain['port'],"-k",newChain['password']])
+        #launch a new blockchain as a subprocess                
+        loader = subprocess.Popen(["pipenv","run","python","blockchain.py","-p",newChain['port'],"-k",newChain['password']])
         # I wonder if we can do sth. with loader
-
+       
         #add the chain to self.voteChain
         self.voteChain.append(newChain)
 
@@ -81,7 +80,7 @@ class VotingSys:
         #start initialize the vote
         #save the Vote Info to the chain (by send sth. like a transfer)
         self.initNewBlockChain(newChain['index'])
-
+        
         #then set a timer to start the vote in time
         self.votingStartTimer(newChain['index'],startTime)
 
@@ -89,7 +88,7 @@ class VotingSys:
         self.votingTimeCountDown(newChain['index'],endTime)
         #test
         self.createFinishedVoteTimer(newChain['index'])
-
+    
     def calculatePortFromInfo(self, voteIntro, voteIndex):
         #set the port (should be crypto before sending email, now only for test)
         return self.port + voteIndex + 1
@@ -103,10 +102,10 @@ class VotingSys:
         #send message to BlockChain to init the forst several block and create crypto key
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
-        sleep(10)
         #print(voteIndex)
         #print(self.voteChain[voteIndex])
-        r = requests.post("http://localhost:5001/initVote", json=self.voteChain[voteIndex], headers = headers)
+        #print("http://localhost:"+self.voteChain[voteIndex]['port']+"/initVote")
+        r = requests.post("http://localhost:"+self.voteChain[voteIndex]['port']+"/initVote", json=self.voteChain[voteIndex], headers = headers)
 
         print(r)
         return
@@ -124,8 +123,8 @@ class VotingSys:
         scheduler = BlockingScheduler()
         scheduler.add_job(self.autoMining, 'interval', seconds=10, id='test_job1')
         scheduler.start()
-
-
+        
+    
     def votingStartTimer(self, voteIndex, startTime):
         # set a timer, when vote start, tell BlockChain to send email to attender
 
@@ -164,7 +163,7 @@ class VotingSys:
 
         #if xxx['finish'] == 0 :
         #    return {"warning":"VOTE have NOT finished yet!!!"}
-
+        
         #4 set a timer to stop the blockChain after several days
         self.createFinishedVoteTimer(voteIndex)
 
@@ -174,7 +173,7 @@ class VotingSys:
         #countTheVote and PrintOut(and other things)
 
 
-        return
+        return 
 
     def createFinishedVoteTimer(self, voteIndex):
         # set a timer, download all the info of that chain
@@ -184,8 +183,8 @@ class VotingSys:
         newthread = threading.Timer(210, DeleteChain,(port, password))
         newthread.start()
         return 0
-
-
+    
+    
 
 app = Flask(__name__)
 # Instantiate the VotingSystem
@@ -209,12 +208,12 @@ def create_vote():
 
     #if not all(k in values for k in required):
         #return 'Missing values', 400
-
+    
     #Create the chain
     #xxx = votingSystem.createVoteChain(values['voteIntro'], values['candidate'], values['emailList'], values['startTime'], values['endTime'])
 
     ###################
-    ## design sth. to return
+    ## design sth. to return 
     ###################
 
     #return jsonify(xxx), 201
@@ -223,10 +222,15 @@ def create_vote():
     if values:
         candidates = values['candidates'].split(",")
         print(candidates)
-        attenders = values['attenders'].split(',')
-        print(attenders)
+        attenders = values['attenders'].split(',')     
+        print(attenders) 
+        print("==================================")
+        print("startdate: ",values["sdate"])
+        print("")
+        print("==================================")
         xxx = votingSystem.createVoteChain(values['name'], candidates, attenders, values['sdate'], values['edate'])
-        return jsonify(xxx), 201
+        #return jsonify(xxx), 201
+        return render_template('page.html',content="A vote has been created.")
     return render_template('createvote.html')
 
 @app.route('/attend', methods=['GET', 'POST'])
@@ -235,8 +239,10 @@ def attend_vote():
     if values:
         key = values["key"]
         selection = values["candidate"]
+        #port = 
         print("key: ",key)
         print("selection: ",selection)
+        #print("port: ")
 
         newVote = {
             "sender": key,
@@ -248,6 +254,7 @@ def attend_vote():
 
         r = requests.post("http://localhost:5001/transactions/new", json=newVote, headers = headers)
         print(r)
+        return render_template('page.html', content='Your vote has been received.')
 
     return render_template('attendvote.html')
 
@@ -263,7 +270,7 @@ def mineOutSpecialInfo():
     xxx = votingSystem.finishVote(values['voteIndex'])
 
     ###################
-    ## design sth. to return
+    ## design sth. to return 
     ###################
 
     return jsonify(xxx), 202
@@ -283,3 +290,5 @@ if __name__ == '__main__':
     t1.start()
     t2.start()
     #app.run(host='0.0.0.0', port=port)
+
+
