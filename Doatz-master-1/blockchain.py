@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 import requests
+import socket
 from flask import Flask, jsonify, request
 
 from email.mime.text import MIMEText
@@ -148,6 +149,16 @@ class Blockchain:
     
     def createCryptoKey(self, email):
         return str(uuid4()).replace('-', '')[-16:]
+    
+    def get_host_ip(self):
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(('8.8.8.8', 80))
+            ip = s.getsockname()[0]
+        finally:
+            s.close()
+
+        return ip
 
     def sendAttenderEmail(self, emailList, port):
         host_server = 'smtp.qq.com'
@@ -161,6 +172,7 @@ class Blockchain:
         smtp.login(sender_qq, pwd)
         
         mail_title = 'An invitation to vote'
+        mail_localIP = self.get_host_ip()
         
         for email in emailList:
             key = self.createCryptoKey(email)
