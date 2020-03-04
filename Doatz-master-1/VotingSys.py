@@ -1,6 +1,7 @@
 import json
 import threading
 from time import time
+from time import sleep
 #from time import clock
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -105,6 +106,7 @@ class VotingSys:
         #print(voteIndex)
         #print(self.voteChain[voteIndex])
         #print("http://localhost:"+self.voteChain[voteIndex]['port']+"/initVote")
+        sleep(10)
         r = requests.post("http://localhost:"+self.voteChain[voteIndex]['port']+"/initVote", json=self.voteChain[voteIndex], headers = headers)
 
         print(r)
