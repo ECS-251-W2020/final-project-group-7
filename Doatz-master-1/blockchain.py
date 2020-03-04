@@ -132,6 +132,16 @@ class Blockchain:
         return block
 
     def new_transaction(self, sender, recipient, amount):
+        if sender == "0":
+            amount = 1
+        elif sender not in self.keylist:
+            amount = 0
+        elif recipient not in self.candidate_list:
+            amount = 0
+        else:
+            amount = 1
+            self.keylist.remove(sender)
+
         """
         Creates a new transaction to go into the next mined Block
 
