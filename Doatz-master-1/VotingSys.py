@@ -1,6 +1,7 @@
 import json
 import threading
 from time import time
+from time import sleep
 #from time import clock
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -102,6 +103,7 @@ class VotingSys:
         #send message to BlockChain to init the forst several block and create crypto key
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
+        sleep(10)
         #print(voteIndex)
         #print(self.voteChain[voteIndex])
         r = requests.post("http://localhost:5001/initVote", json=self.voteChain[voteIndex], headers = headers)
