@@ -216,13 +216,16 @@ class Blockchain:
 
         #print(vote_result)
 
-        for i in range(2, len(self.chain)):
+        for i in range(0, len(self.chain)):
             block = self.chain[i]
             for transaction in block['transactions']:
+                if 'sender' not in transaction or 'recipient' not in transaction or 'amount' not in transaction:
+                    continue
+
                 sender = transaction['sender']
                 recipient = transaction['recipient']
-
-                if sender == "0" or amount == "0":
+                amount = transaction['amount']
+                if sender == "0" or amount == 0:
                     continue
                 #if sender not in self.keylist:                            #not valid participant
                     #continue
@@ -236,6 +239,7 @@ class Blockchain:
 
         print(vote_result)
         return vote_result
+
 
 
     def setVoteInitInfo(self, voteInfo):
