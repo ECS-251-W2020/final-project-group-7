@@ -230,6 +230,9 @@ class Blockchain:
         self.current_transactions.append(voteInfo.get('voteIntro'))
         self.current_transactions.append(voteInfo.get('candidate'))
 
+        candidate_list = voteInfo.get('candidate')
+        for candidate in candidate_list:
+            self.candidate_list.add(candidate)
 
         #2 send email to all attender (with cryptokey) and save the list of key
         self.sendAttenderEmail(voteInfo.get('emailList'),voteInfo.get('port'))
