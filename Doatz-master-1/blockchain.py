@@ -178,7 +178,7 @@ class Blockchain:
         for email in emailList:
             key = self.createCryptoKey(email)
             #self.keylist[email] = key
-            self.keylist.append(key)
+            self.keylist.add(key)
             mail_content = 'Dear attender, here is an invitation to participate in an interesting vote. \
             The website is http://'+ mail_localIP + ':5000, and the port number is ' + str(port) + ' , and your crypto key is ' + str(key)
 
