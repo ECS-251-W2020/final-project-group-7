@@ -20,7 +20,8 @@ class Blockchain:
         self.nodes = set()
         self.port = "5000"
         self.password = ""
-        self.keylist = []
+        self.keylist = set()
+        self.candidate_list = set()
         #self.voteInfo = {}
 
         # Create the genesis block
