@@ -118,6 +118,7 @@ class VotingSys:
     def autoMining(self):
         for k in self.voteChain:
             #if time()>k['startTime'] and time()<k['endTime']:    #if k is not finished yet
+            #swap the order to fix the random bug on Automining
             if True:
                 r = requests.get("http://localhost:"+k['port']+"/mine")
                 #print(r.json())
@@ -236,9 +237,11 @@ def create_vote():
         enddt = datetime.strptime(values['edate']+'-'+values['etime']+':00', '%Y-%m-%d-%H:%M:%S')
         starttime = int((startdt-datetime.now()).total_seconds())
         endtime = int((enddt-datetime.now()).total_seconds())
+        #Add interface in front for invalid input of starttime and endtime
         if starttime < 0:
             starttime = 10
         if endtime < 0 or starttime > endtime:
+            endtime = starttime + 60
             print("Input error")
         xxx = votingSystem.createVoteChain(values['name'], candidates, attenders, starttime, endtime)
         #return jsonify(xxx), 201
