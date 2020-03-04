@@ -10,7 +10,7 @@ from uuid import uuid4
 import subprocess
 
 # create timer
-import datetime
+from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 import requests
@@ -80,10 +80,12 @@ class VotingSys:
 
         #start initialize the vote
         #save the Vote Info to the chain (by send sth. like a transfer)
-        self.initNewBlockChain(newChain['index'])
+        #self.initNewBlockChain(newChain['index'])
         
         #then set a timer to start the vote in time
         self.votingStartTimer(newChain['index'],startTime)
+        newthread = threading.Timer(startTime, self.initNewBlockChain,(newChain['index'],))
+        newthread.start()
 
         #add a new timer to stop the vote
         self.votingTimeCountDown(newChain['index'],endTime)
@@ -142,7 +144,7 @@ class VotingSys:
         # the key here should be set later in the project
         port = self.voteChain[voteIndex]["port"]
         password = self.voteChain[voteIndex]["password"]
-        newthread = threading.Timer(180, SendRequest,(port, password))
+        newthread = threading.Timer(endTime, SendRequest,(port, password))
         newthread.start()
 
         return
@@ -230,7 +232,15 @@ def create_vote():
         print("startdate: ",values["sdate"])
         print("")
         print("==================================")
-        xxx = votingSystem.createVoteChain(values['name'], candidates, attenders, values['sdate'], values['edate'])
+        startdt = datetime.strptime(values['sdate']+'-'+values['stime']+':00', '%Y-%m-%d-%H:%M:%S')
+        enddt = datetime.strptime(values['edate']+'-'+values['etime']+':00', '%Y-%m-%d-%H:%M:%S')
+        starttime = int((startdt-datetime.now()).total_seconds())
+        endtime = int((enddt-datetime.now()).total_seconds())
+        if starttime < 0:
+            starttime = 10
+        if endtime < 0 or starttime > endtime:
+            print("Input error")
+        xxx = votingSystem.createVoteChain(values['name'], candidates, attenders, starttime, endtime)
         #return jsonify(xxx), 201
         return render_template('page.html',content="A vote has been created.")
     return render_template('createvote.html')
