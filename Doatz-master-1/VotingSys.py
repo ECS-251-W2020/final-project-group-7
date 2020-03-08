@@ -119,8 +119,11 @@ class VotingSys:
         for k in self.voteChain:
             #if time()>k['startTime'] and time()<k['endTime']:    #if k is not finished yet
             #swap the order to fix the random bug on Automining
-            if True:
+            #if True:
+            try:
                 r = requests.get("http://localhost:"+k['port']+"/mine")
+            except:
+                print(' Port ' +k['port']+ ' Have Not Prepared Yet !!! ')
                 #print(r.json())
 
     def startMiningTimer(self):
@@ -185,7 +188,7 @@ class VotingSys:
         #then, shutdown that block chain, and delete the vote in self.voteChain
         port = self.voteChain[voteIndex]["port"]
         password = self.voteChain[voteIndex]["password"]
-        newthread = threading.Timer(210, DeleteChain,(port, password))
+        newthread = threading.Timer(300 + self.voteChain[voteIndex]["endTime"], DeleteChain,(port, password))
         newthread.start()
         return 0
     
@@ -254,10 +257,10 @@ def attend_vote():
     if values:
         key = values["key"]
         selection = values["candidate"]
-        #port = 
+        port = values["port"]
         print("key: ",key)
         print("selection: ",selection)
-        #print("port: ")
+        print("port: ",port)
 
         newVote = {
             "sender": key,
@@ -267,7 +270,7 @@ def attend_vote():
 
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
-        r = requests.post("http://localhost:5001/transactions/new", json=newVote, headers = headers)
+        r = requests.post("http://localhost:"+ port +"/transactions/new", json=newVote, headers = headers)
         print(r)
         return render_template('page.html', content='Your vote has been received.')
 

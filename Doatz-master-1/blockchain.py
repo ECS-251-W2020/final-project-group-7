@@ -22,6 +22,8 @@ class Blockchain:
         self.password = ""
         self.keylist = set()
         self.candidate_list = set()
+        self.intro = ""
+        self.candidate = []
         #self.voteInfo = {}
 
         # Create the genesis block
@@ -242,14 +244,66 @@ class Blockchain:
 
 
 
+    def printVote(self):
+        bollats = []
+        vote_result = {}
+        
+        for candidate in self.candidate_list:
+            vote_result[candidate] = 0
+
+        for i in range(0, len(self.chain)):
+            block = self.chain[i]
+            for transaction in block['transactions']:
+                if 'sender' not in transaction or 'recipient' not in transaction or 'amount' not in transaction:
+                    continue
+
+                sender = transaction['sender']
+                recipient = transaction['recipient']
+                amount = transaction['amount']
+
+                if sender == "0" :
+                    continue
+                else :
+                    if amount == 0 :
+                        newBallot = {
+                            "sender" : sender,
+                            "candidate" : recipient,
+                            "verfied" : False
+                        }
+                        bollats.append(newBallot)
+                        continue
+                    else:
+                        newBallot = {
+                            "sender" : sender,
+                            "candidate" : recipient,
+                            "verfied" : True
+                        }
+                        bollats.append(newBallot)
+                        vote_result[recipient] = vote_result[recipient] + 1
+                        #already_vote_keylist.add(sender)
+
+        vote_result["leftVotes"] = len(self.keylist)
+
+        vote_detail = {
+            "voteName": self.intro,
+            "candidate": self.candidate,
+            "ballots":bollats,
+            "voteResult": vote_result
+        }
+
+        print(vote_detail)
+        return vote_detail
+
+
     def setVoteInitInfo(self, voteInfo):
         #Init the Voting info
         #1 add intro & candidate into block
         self.current_transactions.append(voteInfo.get('voteIntro'))
         self.current_transactions.append(voteInfo.get('candidate'))
 
-        candidate_list = voteInfo.get('candidate')
-        for candidate in candidate_list:
+        self.intro = voteInfo.get('voteIntro')
+        self.candidate = voteInfo.get('candidate')
+        for candidate in self.candidate:
             self.candidate_list.add(candidate)
 
         #2 send email to all attender (with cryptokey) and save the list of key
@@ -379,6 +433,12 @@ def full_chain():
         'chain': blockchain.chain,
         'length': len(blockchain.chain),
     }
+    return jsonify(response), 200
+
+
+@app.route('/chainDetail', methods=['GET'])
+def votingDetail():
+    response = blockchain.printVote()
     return jsonify(response), 200
 
 
