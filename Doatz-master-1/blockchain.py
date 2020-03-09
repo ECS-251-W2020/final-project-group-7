@@ -1,6 +1,7 @@
 import hashlib
 import json
 from time import time
+from datetime import datetime
 #from time import clock
 from urllib.parse import urlparse
 from uuid import uuid4
@@ -8,6 +9,7 @@ from uuid import uuid4
 import requests
 import socket
 from flask import Flask, jsonify, request
+from flask import render_template
 
 from email.mime.text import MIMEText
 from email.header import Header
@@ -156,6 +158,7 @@ class Blockchain:
             'sender': sender,
             'recipient': recipient,
             'amount': amount,
+            'timeStamp': str(time())
         })
 
         return self.last_block['index'] + 1
@@ -192,7 +195,8 @@ class Blockchain:
             #self.keylist[email] = key
             self.keylist.add(key)
             mail_content = 'Dear attender, here is an invitation to participate in an interesting vote. \
-            The website is http://'+ mail_localIP + ':5000, and the port number is ' + str(port) + ' , and your crypto key is ' + str(key)
+            The website is http://'+ mail_localIP + ':5000, and the port number is ' + str(port) + ' , and your crypto key is ' + str(key) + '\
+                 And you can check the voting progress anytime at ' + mail_localIP + ':' + str(port) + '/chainDetail'
 
 
             receiver = email
@@ -260,6 +264,7 @@ class Blockchain:
                 sender = transaction['sender']
                 recipient = transaction['recipient']
                 amount = transaction['amount']
+                time = transaction['timeStamp']
 
                 if sender == "0" :
                     continue
@@ -268,7 +273,8 @@ class Blockchain:
                         newBallot = {
                             "sender" : sender,
                             "candidate" : recipient,
-                            "verfied" : False
+                            "verified" : False,
+                            "time" : time
                         }
                         bollats.append(newBallot)
                         continue
@@ -276,7 +282,8 @@ class Blockchain:
                         newBallot = {
                             "sender" : sender,
                             "candidate" : recipient,
-                            "verfied" : True
+                            "verified" : True,
+                            "time" : time
                         }
                         bollats.append(newBallot)
                         vote_result[recipient] = vote_result[recipient] + 1
@@ -439,6 +446,7 @@ def full_chain():
 @app.route('/chainDetail', methods=['GET'])
 def votingDetail():
     response = blockchain.printVote()
+    #return jsonify(response), 200
     return render_template('chainDetail.html', content = response)
 
 
