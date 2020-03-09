@@ -1,0 +1,107 @@
+<<!DOCTYPE html>
+<!--
+	Interphase by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Doatz</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/skel.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style-xlarge.css') }}" />
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script type="text/javascript">
+       const content = JSON.parse('{{ content | tojson }}');
+
+       a = "hhhhh";
+
+       //var datapoints = [
+      //  { y: 1, indexLabel: a},
+      //  { y: 1, indexLabel: "Wii" },
+      //  { y: 1, indexLabel: "Xbox 360" },
+      //  { y: 1, indexLabel: "Nintendo DS"}
+      //]
+      datapoints = []
+      const keys = Object.keys(content.voteResult)
+
+      for(var i = 0; i < keys.length; i++){
+        index = keys[i];
+        num = content.voteResult[keys[i]];
+        datapoints.push({ y: num, indexLabel: index });
+      }
+
+       window.onload = function () {
+
+       var chart = new CanvasJS.Chart("chartContainer",
+      {
+      legend: {
+        maxWidth: 350,
+        itemWidth: 120
+      },
+      data: [
+       {
+      type: "pie",
+      showInLegend: true,
+      legendText: "{indexLabel}",
+      dataPoints: datapoints
+      }
+     ]
+      });
+     chart.render();
+     }
+</script>
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<h1><a href="{{ url_for('my_index') }}">Doatz</a></h1>
+			</header>
+
+		<!-- Main -->
+			<section id="main" class="wrapper">
+				<div class="container">
+
+					<header class="major">
+						<h2>{{content["voteName"]}}</h2>
+					</header>
+
+						<section>
+              <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+						</section>
+
+            <section>
+              <div class="table-wrapper">
+								<table>
+									<thead>
+										<tr>
+											<th>sender</th>
+											<th>vote for</th>
+											<th>verified</th>
+                      <th>time</th>
+										</tr>
+									</thead>
+									<tbody>
+                    {% for i in content["ballots"] %}
+                     <tr>
+                     <td>{{i.sender}}</td>
+                     <td>{{i.candidate}}</td>
+                     <td>{{i.verified}}</td>
+                     <td>{{i.time}}</td>
+                     </tr>
+                    {% endfor %}
+								</table>
+							</div>
+            </section>
+						<script type="text/javascript" src= "{{ url_for('static', filename='js/jquery.min.js') }}" ></script>
+						<script type="text/javascript" src= "{{ url_for('static', filename='js/skel.min.js') }}" ></script>
+						<script type="text/javascript" src= "{{ url_for('static', filename='js/skel-layers.min.js') }}" ></script>
+						<script type="text/javascript" src= "{{ url_for('static', filename='js/init.js') }}" ></script>
+
+	</body>
+</html>
