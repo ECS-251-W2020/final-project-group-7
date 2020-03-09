@@ -439,7 +439,7 @@ def full_chain():
 @app.route('/chainDetail', methods=['GET'])
 def votingDetail():
     response = blockchain.printVote()
-    return jsonify(response), 200
+    return render_template('chainDetail.html', content = response)
 
 
 @app.route('/nodes/register', methods=['POST'])
