@@ -40,7 +40,7 @@ $ pipenv install Flask==0.12.2 requests==2.18.4
     
 
 ## Source code structure
-
+```
 Doatz-master-1
 ├── templates                                 # Code for frontend
 ├── VotingSys.py                              # Code for the voting system
@@ -74,6 +74,7 @@ Doatz-master-1
     ├── mine()                                # Mine and add a block to chain
     ├── votingDetail()                        # Check vote chain detail
     └── DeleteChain()                         # Delete a chain and save its data
+```
 
 ## Contribution
 Juanyi Xu
