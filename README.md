@@ -4,11 +4,15 @@ Doatz: A Blockchain Based E-Voting System
 # Overview
 Voting plays an important role in collective life. Traditional methods are always being questioned on privacy and credibility, while those problems can be easily solved by blockchain due to its data structure. Previous blockchain based E-voting systems mainly focus on nation-wide voting program which costs a lot of computation power and requires highly secured authentication. We build a user-friendly android application supporting universal voting scenes that are difficult to tamper and proved to be anonymous. We use mobile phone's physical information and personal ID to create unique private key to create anti-counterfeiting signature. Instead of fingerprint or other physiological characteristics, mobile phones are secure enough for daily authentication and easy to access.
 
+# Useful link 
 Trello:
 https://trello.com/b/5HGOJN57/ecs251osgroup7
 
 Summary of Progress:
 https://docs.google.com/document/d/1M-j_rnqOqQrnESMdYQdU7wHGRbH4rqavMOtFe5a2pTs/edit?ts=5e4ca193
+
+Final report slides:
+https://docs.google.com/presentation/d/172o8PKVEyB7sq-lRu2rkdaajM3fFpuijsHKbSeBTBu0/edit?usp=sharing
 
 # Doatz
 
@@ -28,9 +32,9 @@ $ pip install pipenv
 4. Install requirements  
 ```
 $ pipenv install Flask==0.12.2 requests==2.18.4
-** BE SURE TO re-install the enviroment every time when change folder! (because of pipenv)
-``` 
 
+``` 
+** BE SURE TO re-install the enviroment every time when change folder! (because of pipenv)
 5. Run the server:
     * `$ pipenv run python VotingSys.py` 
     * `$ pipenv run python VotingSys.py -p 5001`
@@ -78,7 +82,9 @@ Doatz-master-1
 ```
 
 ## Contribution
-Juanyi Xu
-Muting Wu
-Yalin Zhang
-Sicheng Mu
+```
+Juanyi Xu: Main structure design; message passing; secure design; experiment testing
+Muting Wu: Email function; ballot counting; simultaneity bug fix
+Yalin Zhang: Front-end development
+Sicheng Mu: Timer; bug fix; README
+```
