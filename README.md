@@ -34,7 +34,7 @@ $ pip install pipenv
 $ pipenv install Flask==0.12.2 requests==2.18.4
 
 ``` 
-** BE SURE TO re-install the enviroment every time when change folder! (because of pipenv)
+** BE SURE TO re-install the enviroment every time when change folder! (because of pipenv)  
 5. Run the server:
     * `$ pipenv run python VotingSys.py` 
     * `$ pipenv run python VotingSys.py -p 5001`
@@ -82,9 +82,9 @@ Doatz-master-1
 ```
 
 ## Contribution
-```
-Juanyi Xu: Main structure design; message passing; secure design; experiment testing
-Muting Wu: Email function; ballot counting; simultaneity bug fix
-Yalin Zhang: Front-end development
-Sicheng Mu: Timer; bug fix; README
-```
+
+Juanyi Xu: Main structure design; message passing; secure design; experiment testing  
+Muting Wu: Email function; ballot counting; simultaneity bug fix  
+Yalin Zhang: Front-end development  
+Sicheng Mu: Timer; bug fix; README  
+
